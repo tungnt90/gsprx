@@ -93,13 +93,23 @@ read COUNT
 FIRST_PORT=10000
 LAST_PORT=$(($FIRST_PORT + $COUNT))
 
+echo "try remove data.txt"
+rm -f $WORKDIR/data.txt
 gen_data >$WORKDIR/data.txt
+
+echo "try remove boot_iptables"
+rm -f $WORKDIR/boot_iptables.sh
 gen_iptables >$WORKDIR/boot_iptables.sh
+
+echo "try remove boot_ifconfig"
+rm -f $WORKDIR/boot_ifconfig.sh
 gen_ifconfig >$WORKDIR/boot_ifconfig.sh
 chmod +x ${WORKDIR}/boot_*.sh /etc/rc.local
 
+rm -f /usr/local/etc/3proxy/3proxy.cfg
 gen_3proxy >/usr/local/etc/3proxy/3proxy.cfg
 
+rm -f /etc/rc.local
 cat >>/etc/rc.local <<EOF
 bash ${WORKDIR}/boot_iptables.sh
 bash ${WORKDIR}/boot_ifconfig.sh
@@ -109,6 +119,4 @@ EOF
 
 bash /etc/rc.local
 
-gen_proxy_file_for_user
-
-upload_proxy
+echo "Completed"
